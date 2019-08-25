@@ -16,14 +16,9 @@ app.use(express.static(publicDirectoryPath));
 let count = 0;
 io.on('connection', (socket) => {
     console.log('New WebSocket connection');
-    socket.emit('countUpdated', count);
-
-    socket.on('incrementCount', () => {
-        count += 1;
-        // Notifies only the client that sent the update
-        // socket.emit('countUpdated', count);
-        // io notifies all the clients connected
-        io.emit('countUpdated', count);
+    socket.emit('welcomeMessage', 'Welcome to chat!!');
+    socket.on('sendMessage', (msg) => {
+        io.emit('newMessage', msg);
     });
 })
 
