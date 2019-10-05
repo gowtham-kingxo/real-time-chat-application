@@ -18,8 +18,10 @@ io.on('connection', (socket) => {
     console.log('New WebSocket connection');
     socket.emit('welcomeMessage', 'Welcome to chat!!');
     socket.broadcast.emit('welcomeMessage', 'A new user has joined!');
-    socket.on('sendMessage', (msg) => {
+
+    socket.on('sendMessage', (msg, callback) => {
         io.emit('newMessage', msg);
+        callback();
     });
 
     socket.on('disconnect', () => {

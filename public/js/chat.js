@@ -1,4 +1,5 @@
 const socket = io();
+
 socket.on('countUpdated', (count) => {
     console.log(`the count has been updated to: ${count}`);
 })
@@ -16,7 +17,9 @@ document.querySelector('#message-form').addEventListener('submit', (event) => {
     // here target is the form and we can use elements.message to access 
     // the input with name 'message'
     const message = event.target.elements.message.value;
-    socket.emit('sendMessage', message);
+    socket.emit('sendMessage', message, () => {
+        console.log('The message was delivered!');
+    });
 });
 
 // Handles send-location click event
