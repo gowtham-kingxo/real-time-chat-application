@@ -11,10 +11,6 @@ socket.on('newMessage', (msg) => {
     console.log('New message..', msg);
 });
 
-socket.on('userLocation', (userLocation) => {
-    console.log('User location', userLocation);
-});
-
 document.querySelector('#message-form').addEventListener('submit', (event) => {
     event.preventDefault();
     // here target is the form and we can use elements.message to access 
