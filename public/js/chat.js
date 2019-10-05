@@ -9,7 +9,11 @@ socket.on('welcomeMessage', (msg) => {
 
 socket.on('newMessage', (msg) => {
     console.log('New message..', msg);
-})
+});
+
+socket.on('userLocation', (userLocation) => {
+    console.log('User location', userLocation);
+});
 
 document.querySelector('#message-form').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -17,4 +21,19 @@ document.querySelector('#message-form').addEventListener('submit', (event) => {
     // the input with name 'message'
     const message = event.target.elements.message.value;
     socket.emit('sendMessage', message);
+});
+
+// Handles send-location click event
+document.querySelector('#send-location').addEventListener('click', () => {
+    // Older browsers may not support Geolocation
+    if (!navigator.geolocation) {
+        return alert('Geolocation is not supported by your browser!');
+    }
+
+    navigator.geolocation.getCurrentPosition((position) => {
+       socket.emit('sendLocation', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+       });
+    });
 });

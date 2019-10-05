@@ -17,8 +17,19 @@ let count = 0;
 io.on('connection', (socket) => {
     console.log('New WebSocket connection');
     socket.emit('welcomeMessage', 'Welcome to chat!!');
+    socket.broadcast.emit('welcomeMessage', 'A new user has joined!');
     socket.on('sendMessage', (msg) => {
         io.emit('newMessage', msg);
+    });
+
+    socket.on('disconnect', () => {
+        io.emit('newMessage', 'A user has left');
+    });
+
+    socket.on('sendLocation', (location) => {
+        const userLocation = `Location: ${location.latitude}, ${location.longitude}`;
+        console.log('userLocation', userLocation);
+        io.emit('userLocation', userLocation);
     });
 })
 
