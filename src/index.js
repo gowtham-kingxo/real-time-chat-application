@@ -4,6 +4,8 @@ const express = require('express');
 const socketio = require('socket.io');
 const Filter = require('bad-words');
 
+const { generateMessage } = require('./utils/messages');
+
 const app = express()
 const server = http.createServer(app);
 // pass http server to io
@@ -17,8 +19,8 @@ app.use(express.static(publicDirectoryPath));
 let count = 0;
 io.on('connection', (socket) => {
     console.log('New WebSocket connection');
-    socket.emit('welcomeMessage', 'Welcome to chat!!');
-    socket.broadcast.emit('welcomeMessage', 'A new user has joined!');
+    socket.emit('newMessage', generateMessage('Welcome!'));
+    socket.broadcast.emit('welcomeMessage', generateMessage('A new user has joined!'));
 
     socket.on('sendMessage', (msg, callback) => {
         const filter = new Filter();
@@ -26,12 +28,12 @@ io.on('connection', (socket) => {
             return callback('Profanity is not allowed');
         }
 
-        io.emit('newMessage', msg);
+        io.emit('newMessage', generateMessage(msg));
         callback();
     });
 
     socket.on('disconnect', () => {
-        io.emit('newMessage', 'A user has left');
+        io.emit('newMessage', generateMessage('A user has left'));
     });
 
     socket.on('sendLocation', (coords, callback) => {
