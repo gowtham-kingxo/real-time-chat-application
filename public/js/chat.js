@@ -5,13 +5,22 @@ const $messageForm = document.querySelector('#message-form');
 const $messageFormInput = $messageForm.querySelector('input');
 const $messageFormButton = $messageForm.querySelector('button');
 const $sendLocationButton = document.querySelector('#send-location');
+const $messages = document.querySelector('#messages');
 
-socket.on('welcomeMessage', (msg) => {
-    console.log('msg: ', msg);
+// HTML Templates
+const messageTemplate = document.querySelector('#message-template').innerHTML;
+
+socket.on('welcomeMessage', (message) => {
+    console.log('msg: ', message);
 });
 
-socket.on('newMessage', (msg) => {
-    console.log('New message..', msg);
+socket.on('newMessage', (message) => {
+    // console.log('New message..', msg);
+    const html = Mustache.render(messageTemplate, {
+        message,
+    });
+
+    $messages.insertAdjacentHTML('beforeend', html);
 });
 
 $messageForm.addEventListener('submit', (event) => {
@@ -42,7 +51,7 @@ $sendLocationButton.addEventListener('click', () => {
     }
 
     $sendLocationButton.setAttribute('disabled', 'disabled');
-    
+
     navigator.geolocation.getCurrentPosition((position) => {
        socket.emit('sendLocation', {
             latitude: position.coords.latitude,
