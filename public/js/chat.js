@@ -9,7 +9,7 @@ const $messages = document.querySelector('#messages');
 
 // HTML Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML;
-const locationURLTemplate = document.querySelector('#current-location').innerHTML;
+const locationURLTemplate = document.querySelector('#location-message-template').innerHTML;
 
 socket.on('newMessage', (message) => {
     // console.log('New message..', msg);
