@@ -41,7 +41,11 @@
         <script id="location-message-template" type="text/html">
             <div>
                 <p>
-                    {{createdAt}} - <a href="{{url}}" target="_blank">Current location</a>
+                    <span class="message__name">Some user name</span>
+                    <span class="message__meta">{{createdAt}}</span>
+                </p>
+                <p>
+                    <a href="{{url}}" target="_blank">Current location</a>
                 </p>
             </div>
         </script>
