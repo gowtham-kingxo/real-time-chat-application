@@ -48,16 +48,9 @@ const getUsersInRoom = (room) => {
     return users.filter((user) => user.room === room.trim().toLowerCase());
 }
 
-addUser({
-    id: 22,
-    username: 'Andrew  ',
-    room: '  South Philly'
-})
-
-addUser({
-    id: 23,
-    username: 'yola  ',
-    room: '  South Philly1'
-})
-
-console.log(getUser(24));
+module.exports = {
+    addUser,
+    removeUser,
+    getUser,
+    getUsersInRoom,
+}
