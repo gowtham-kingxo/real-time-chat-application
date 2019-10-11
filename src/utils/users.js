@@ -40,15 +40,26 @@ const removeUser = (id) => {
     }
 }
 
+const getUser = (id) => {
+    const index = users.findIndex((user) => user.id === id)
+
+    return (index !== -1) ? users[index] : undefined;
+}
+
+const getUsersInRoom = (room) => {
+    return users.filter((user) => user.room === room.trim().toLowerCase());
+}
+
 addUser({
     id: 22,
     username: 'Andrew  ',
     room: '  South Philly'
 })
 
-console.log(users)
+addUser({
+    id: 23,
+    username: 'yola  ',
+    room: '  South Philly1'
+})
 
-const removedUser = removeUser(22)
-
-console.log(removedUser)
-console.log(users)
+console.log(getUser(24));
