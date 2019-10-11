@@ -22,8 +22,13 @@ app.use(express.static(publicDirectoryPath));
 let count = 0;
 io.on('connection', (socket) => {
     console.log('New WebSocket connection');
-    socket.emit('newMessage', generateMessage('Welcome!'));
-    socket.broadcast.emit('welcomeMessage', generateMessage('A new user has joined!'));
+
+    socket.on('join', ({ username, room }) => {
+        socket.join(room);
+        
+        socket.emit('newMessage', generateMessage('Welcome!'));
+        socket.broadcast.to(room).emit('newMessage', generateMessage(`${username} has joined!`));
+    });
 
     socket.on('sendMessage', (msg, callback) => {
         const filter = new Filter();
