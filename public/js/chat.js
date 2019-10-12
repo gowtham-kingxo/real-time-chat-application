@@ -16,8 +16,8 @@ const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true }
 
 socket.on('newMessage', (message) => {
     // console.log('New message..', msg);
-    debugger;
     const html = Mustache.render(messageTemplate, {
+        username: message.username,
         message: message.text,
         createdAt: moment(message.createdAt).format('h:mm a'),
     });
@@ -27,6 +27,7 @@ socket.on('newMessage', (message) => {
 
 socket.on('locationMessage', (locationMessage) => {
     const html = Mustache.render(locationURLTemplate, {
+        username: locationMessage.username,
         url: locationMessage.url,
         createdAt: moment(locationMessage.sentAt).format('h:mm a'),
     });
@@ -37,7 +38,7 @@ socket.on('locationMessage', (locationMessage) => {
 $messageForm.addEventListener('submit', (event) => {
     event.preventDefault();
     $messageFormButton.setAttribute('disabled', 'disabled');
-
+    debugger;
     // here target is the form and we can use elements.message to access 
     // the input with name 'message'
     const message = event.target.elements.message.value;

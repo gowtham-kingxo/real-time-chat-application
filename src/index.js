@@ -5,11 +5,7 @@ const socketio = require('socket.io');
 const Filter = require('bad-words');
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users'); 
-
-const { 
-    generateMessage,
-    generateLocationMessage,
-} = require('./utils/messages');
+const { generateMessage, generateLocationMessage } = require('./utils/messages');
 
 const app = express()
 const server = http.createServer(app);
@@ -45,7 +41,8 @@ io.on('connection', (socket) => {
             return callback('Profanity is not allowed');
         }
 
-        io.emit('newMessage', generateMessage(msg));
+        const user = getUser(socket.id);
+        io.to(user.room).emit('newMessage', generateMessage(user.username, msg));
         callback();
     });
 
@@ -57,9 +54,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sendLocation', (coords, callback) => {
-        io.emit(
+        const user = getUser(socket.id);
+        io.to(user.room).emit(
             'locationMessage', 
-            generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`),
+            generateLocationMessage(user.username, `https://google.com/maps?q=${coords.latitude},${coords.longitude}`),
         );
         callback();
     });
