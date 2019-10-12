@@ -15,6 +15,24 @@ const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML;
 // Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
+const autoscroll = () => {
+    // New msg element
+    const $newMessage = $messages.lastElementChild;
+
+    // Height of the new message
+    const newMessageStyles = getComputedStyle($newMessage);
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+    const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
+
+    const visibleHeight = $messages.offsetHeight;
+    const containerHeight = $messages.scrollHeight;
+    const scrollOffset = $messages.scrollTop + visibleHeight;
+
+    if (containerHeight - newMessageHeight <= scrollOffset) {
+        $messages.scrollTop = $messages.scrollHeight;
+    }
+}
+
 socket.on('newMessage', (message) => {
     // console.log('New message..', msg);
     const html = Mustache.render(messageTemplate, {
@@ -24,6 +42,7 @@ socket.on('newMessage', (message) => {
     });
 
     $messages.insertAdjacentHTML('beforeend', html);
+    autoscroll();
 });
 
 socket.on('locationMessage', (locationMessage) => {
@@ -34,6 +53,7 @@ socket.on('locationMessage', (locationMessage) => {
     });
 
     $messages.insertAdjacentHTML('beforeend', html);
+    autoscroll;
 });
 
 socket.on('roomData', ({ room, users }) => {
@@ -48,7 +68,6 @@ socket.on('roomData', ({ room, users }) => {
 $messageForm.addEventListener('submit', (event) => {
     event.preventDefault();
     $messageFormButton.setAttribute('disabled', 'disabled');
-    debugger;
     // here target is the form and we can use elements.message to access 
     // the input with name 'message'
     const message = event.target.elements.message.value;
