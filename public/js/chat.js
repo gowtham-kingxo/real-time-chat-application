@@ -10,30 +10,64 @@ const $messages = document.querySelector('#messages');
 // HTML Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const locationURLTemplate = document.querySelector('#location-message-template').innerHTML;
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML; 
+
+// Options
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
+const autoscroll = () => {
+    // New msg element
+    const $newMessage = $messages.lastElementChild;
+
+    // Height of the new message
+    const newMessageStyles = getComputedStyle($newMessage);
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+    const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
+
+    const visibleHeight = $messages.offsetHeight;
+    const containerHeight = $messages.scrollHeight;
+    const scrollOffset = $messages.scrollTop + visibleHeight;
+
+    if (containerHeight - newMessageHeight <= scrollOffset) {
+        $messages.scrollTop = $messages.scrollHeight;
+    }
+}
 
 socket.on('newMessage', (message) => {
     // console.log('New message..', msg);
     const html = Mustache.render(messageTemplate, {
+        username: message.username,
         message: message.text,
         createdAt: moment(message.createdAt).format('h:mm a'),
     });
 
     $messages.insertAdjacentHTML('beforeend', html);
+    autoscroll();
 });
 
 socket.on('locationMessage', (locationMessage) => {
     const html = Mustache.render(locationURLTemplate, {
+        username: locationMessage.username,
         url: locationMessage.url,
         createdAt: moment(locationMessage.sentAt).format('h:mm a'),
     });
 
     $messages.insertAdjacentHTML('beforeend', html);
+    autoscroll;
+});
+
+socket.on('roomData', ({ room, users }) => {
+    const html = Mustache.render(sidebarTemplate, {
+        room,
+        users,
+    });
+
+    document.querySelector('#sidebar').innerHTML = html;
 });
 
 $messageForm.addEventListener('submit', (event) => {
     event.preventDefault();
     $messageFormButton.setAttribute('disabled', 'disabled');
-
     // here target is the form and we can use elements.message to access 
     // the input with name 'message'
     const message = event.target.elements.message.value;
@@ -68,4 +102,11 @@ $sendLocationButton.addEventListener('click', () => {
            console.log('Location shared!');
        });
     });
+});
+
+socket.emit('join', { username, room }, (error) => {
+    if (error) {
+        alert(error);
+        location.href = '/';
+    }
 });
